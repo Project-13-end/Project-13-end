@@ -1,6 +1,5 @@
 # 예시어플 백엔드 서버 개발
 
-![스크린샷 2024-01-17 14.01.19.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/c69962b0-3951-485b-b10a-5bb29576bba8/bfd6daf1-ce52-4e72-a17a-ae3f57d846d0/%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%89%E1%85%A3%E1%86%BA_2024-01-17_14.01.19.png)
 
 ## 📙 프로젝트 개요
 
@@ -63,7 +62,6 @@
 
 해당 문서에서는 아래 그림의 `SpringBoot` 에 대해 다룹니다.
 
-!https://github.com/chhs2131/dbsgAPI/raw/develop/readme_file/img.png
 
 ### 🤔 주요 기능
 
@@ -82,7 +80,6 @@
 - 장바구니: 원하는 서비스를 결제하기 위해 원하는 상품을 저장하고 관리할 수 있습니다.
 - 결제: 원하는 서비스를 제공받기 위해 결제를 할 수 있습니다.
 
-!https://user-images.githubusercontent.com/10378777/223958261-832ce4fd-a0cb-4c4d-a88b-d1d50e4f14c7.png
 
 ## 개발 과정에서 나왔던 질문 (최소 200자 이상)
 
