@@ -20,7 +20,7 @@ public enum ErrorCode {
     INTERNAL_SERVER_ERROR(500, "C_004", "서버에 문제가 생겼습니다.");
 
     private final int status;
-    private final String message;
     private final String code;
+    private final String message;
 
 }
