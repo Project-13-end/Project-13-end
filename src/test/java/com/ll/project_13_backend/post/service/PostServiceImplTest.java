@@ -2,12 +2,14 @@ package com.ll.project_13_backend.post.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import com.ll.project_13_backend.global.exception.AuthException;
 import com.ll.project_13_backend.global.exception.EntityNotFoundException;
 import com.ll.project_13_backend.member.entity.Member;
 import com.ll.project_13_backend.member.repository.MemberRepository;
 import com.ll.project_13_backend.post.dto.service.CreatePostDto;
+import com.ll.project_13_backend.post.dto.service.FindPostDto;
 import com.ll.project_13_backend.post.entity.Category;
 import com.ll.project_13_backend.post.entity.Post;
 import com.ll.project_13_backend.post.repository.PostRepository;
@@ -18,7 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-
+//todo 통합 테스트 시 id가 보장받지 못하는 상황을 어떻게 처리해야 하는가 생각해보자
 @SpringBootTest
 @Transactional
 class PostServiceImplTest {
@@ -117,11 +119,42 @@ class PostServiceImplTest {
         Member member1 = Member.builder()
                 .loginId("member1")
                 .build();
-        postService.createPost(createPostDto1, member1);
+        Long id = postService.createPost(createPostDto1, member1);
         //when & then
 
-        assertThatThrownBy(() -> postService.findPost(2L))
+        assertThatThrownBy(() -> postService.findPost(999999999999L))
                 .isInstanceOf(EntityNotFoundException.class)
                 .hasMessage("지정한 Entity를 찾을 수 없습니다.");
+    }
+
+    @DisplayName("게시글을 조회합니다.")
+    @Test
+    public void findPostTest() {
+
+        Member member1 = Member.builder()
+                .loginId("member1")
+                .name("testName1")
+                .build();
+
+        CreatePostDto createPostDto1 = CreatePostDto.builder()
+                .title("testTitle1")
+                .content("testContent1")
+                .category(Category.KOR)
+                .price(10000L)
+                .build();
+        Member member = memberRepository.save(member1);
+        Long id = postService.createPost(createPostDto1, member);
+
+        //when
+        FindPostDto findPostDto = postService.findPost(id);
+
+        //then
+        assertAll(
+                () -> assertThat(findPostDto.member().getName()).isEqualTo("testName1"),
+
+                () -> assertThat(findPostDto)
+                        .extracting("title", "content", "category", "price")
+                        .contains("testTitle1", "testContent1", Category.KOR, 10000L)//시간확인은 궂이 안해도?
+        );
     }
 }
