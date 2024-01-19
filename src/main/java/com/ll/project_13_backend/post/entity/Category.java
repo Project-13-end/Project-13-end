@@ -1,5 +1,7 @@
 package com.ll.project_13_backend.post.entity;
 
+import com.ll.project_13_backend.global.exception.ErrorCode;
+import com.ll.project_13_backend.global.exception.InvalidValueException;
 import java.util.Arrays;
 import lombok.Getter;
 
@@ -18,7 +20,7 @@ public enum Category {
         return Arrays.stream(values())
                 .filter(c -> c.value.equals(category))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카테고리입니다")); // 임시 코드
+                .orElseThrow(() -> new InvalidValueException(ErrorCode.INVALID_INPUT_VALUE));
     }
 
     private final String value;
