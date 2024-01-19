@@ -6,7 +6,6 @@ import com.ll.project_13_backend.member.entity.Member;
 import com.ll.project_13_backend.post.dto.service.CreatePostDto;
 import com.ll.project_13_backend.post.entity.Post;
 import com.ll.project_13_backend.post.repository.PostRepository;
-import java.security.Principal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
