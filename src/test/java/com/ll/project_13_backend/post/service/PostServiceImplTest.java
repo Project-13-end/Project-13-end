@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.ll.project_13_backend.global.exception.AuthException;
+import com.ll.project_13_backend.global.exception.EntityNotFoundException;
 import com.ll.project_13_backend.member.entity.Member;
 import com.ll.project_13_backend.member.repository.MemberRepository;
 import com.ll.project_13_backend.post.dto.service.CreatePostDto;
@@ -100,5 +101,27 @@ class PostServiceImplTest {
         assertThatThrownBy(() -> postService.createPost(createPostDto1, null))
                 .isInstanceOf(AuthException.class)
                 .hasMessage("로그인을 하지 않은 사용자입니다.");
+    }
+
+    @DisplayName("존재하지 않는 게시글을 조회하면 예외가 발생한다.")
+    @Test
+    public void findPostExceptionTest() {
+        //given
+        CreatePostDto createPostDto1 = CreatePostDto.builder()
+                .title("testTitle1")
+                .content("testContent1")
+                .category(Category.KOR)
+                .price(10000L)
+                .build();
+
+        Member member1 = Member.builder()
+                .loginId("member1")
+                .build();
+        postService.createPost(createPostDto1, member1);
+        //when & then
+
+        assertThatThrownBy(() -> postService.findPost(2L))
+                .isInstanceOf(EntityNotFoundException.class)
+                .hasMessage("지정한 Entity를 찾을 수 없습니다.");
     }
 }
