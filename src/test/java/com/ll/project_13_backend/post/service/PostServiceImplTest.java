@@ -150,11 +150,11 @@ class PostServiceImplTest {
 
         //then
         assertAll(
-                () -> assertThat(findPostDto.member().getName()).isEqualTo("testName1"),
+                () -> assertThat(findPostDto.name()).isEqualTo("testName1"),
 
                 () -> assertThat(findPostDto)
                         .extracting("title", "content", "category", "price")
-                        .contains("testTitle1", "testContent1", Category.KOR, 10000L)//시간확인은 궂이 안해도?
+                        .contains("testTitle1", "testContent1", "kor", 10000L)//시간확인은 궂이 안해도?
         );
     }
 }
