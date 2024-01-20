@@ -19,7 +19,7 @@ public record FindPostResponse(String name,
                 .name(findPostDto.name())
                 .title(findPostDto.title())
                 .content(findPostDto.content())
-                .category(findPostDto.category())
+                .category(findPostDto.category().getValue())
                 .price(findPostDto.price())
                 .createdDate(findPostDto.createdDate())
                 .build();
