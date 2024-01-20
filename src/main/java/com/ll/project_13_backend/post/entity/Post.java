@@ -2,6 +2,7 @@ package com.ll.project_13_backend.post.entity;
 
 import com.ll.project_13_backend.global.BaseEntity;
 import com.ll.project_13_backend.member.entity.Member;
+import com.ll.project_13_backend.post.dto.service.UpdatePostDto;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -38,5 +39,10 @@ public class Post extends BaseEntity {
     private Long price;
 
 
-
+    public void updatePost(final UpdatePostDto updatePostDto) {
+        this.title = updatePostDto.title();
+        this.content = updatePostDto.content();
+        this.category = updatePostDto.category();
+        this.price = updatePostDto.price();
+    }
 }
