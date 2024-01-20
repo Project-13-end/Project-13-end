@@ -234,4 +234,23 @@ class PostServiceImplTest {
                 .extracting("title", "content", "category", "price")
                 .contains("updateTitle1", "updateContent1", Category.ENG, 20000L);
     }
+
+    @DisplayName("권한이 없는 사용자가 게시글을 삭제하려하면 예외가 발생한다.")
+    @Test
+    public void datePostUnauthorizedUserExceptionTest() {
+        //given
+        CreatePostDto createPostDto = CreatePostDto.builder()
+                .title("testTitle1")
+                .content("testContent1")
+                .category(Category.KOR)
+                .price(10000L)
+                .build();
+        Member member = Member.builder().build();
+        Long postId = postService.createPost(createPostDto, member);
+
+        //when & then
+        assertThatThrownBy(() -> postService.deletePost(postId, null))
+                .isInstanceOf(AuthException.class)
+                .hasMessage("권한이 없는 사용자입니다.");
+    }
 }
