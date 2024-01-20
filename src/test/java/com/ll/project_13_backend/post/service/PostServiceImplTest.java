@@ -2,6 +2,7 @@ package com.ll.project_13_backend.post.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.tuple;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import com.ll.project_13_backend.global.exception.AuthException;
@@ -10,6 +11,7 @@ import com.ll.project_13_backend.member.entity.Member;
 import com.ll.project_13_backend.member.repository.MemberRepository;
 import com.ll.project_13_backend.post.dto.service.CreatePostDto;
 import com.ll.project_13_backend.post.dto.service.FindPostDto;
+import com.ll.project_13_backend.post.dto.service.UpdatePostDto;
 import com.ll.project_13_backend.post.entity.Category;
 import com.ll.project_13_backend.post.entity.Post;
 import com.ll.project_13_backend.post.repository.PostRepository;
@@ -156,5 +158,80 @@ class PostServiceImplTest {
                         .extracting("title", "content", "category", "price")
                         .contains("testTitle1", "testContent1", Category.KOR, 10000L)//시간확인은 궂이 안해도?
         );
+    }
+
+    @DisplayName("권한이 없는 사용자가 게시글을 수정하려하면 예외가 발생한다.")
+    @Test
+    public void updatePostUnauthorizedUserExceptionTest() {
+        //given
+        CreatePostDto createPostDto = CreatePostDto.builder()
+                .title("testTitle1")
+                .content("testContent1")
+                .category(Category.KOR)
+                .price(10000L)
+                .build();
+        Member member = Member.builder().build();
+        Long postId = postService.createPost(createPostDto, member);
+
+        UpdatePostDto updatePostDto = UpdatePostDto.builder()
+                .build();
+
+        //when & then
+        assertThatThrownBy(() -> postService.updatePost(postId, updatePostDto, null))
+                .isInstanceOf(AuthException.class)
+                .hasMessage("권한이 없는 사용자입니다.");
+    }
+
+    @DisplayName("존재하지 않는 게시글을 수정하려하면 예외가 발생한다.")
+    @Test
+    public void updatePostNotLoginException() {
+        //given
+        CreatePostDto createPostDto = CreatePostDto.builder()
+                .title("testTitle1")
+                .content("testContent1")
+                .category(Category.KOR)
+                .price(10000L)
+                .build();
+        Member member = Member.builder().build();
+        Long postId = postService.createPost(createPostDto, member);
+
+        UpdatePostDto updatePostDto = UpdatePostDto.builder()
+                .build();
+
+        //when & then
+        assertThatThrownBy(() -> postService.updatePost(99999999L, updatePostDto, member))
+                .isInstanceOf(EntityNotFoundException.class)
+                .hasMessage("지정한 Entity를 찾을 수 없습니다.");
+    }
+
+    @DisplayName("게시글을 수정한다.")
+    @Test
+    public void updatePostTest() {
+        //todo 테스트 코드를 작성 시 testTitle1 포스트 하나만 만들어서 테스르를 하는것인가 아니면 여러개를 만들어야 하는것인가 생각해보자
+        //given
+        CreatePostDto createPostDto = CreatePostDto.builder()
+                .title("testTitle1")
+                .content("testContent1")
+                .category(Category.KOR)
+                .price(10000L)
+                .build();
+        Member member = Member.builder().build();
+        Long postId = postService.createPost(createPostDto, member);
+
+        UpdatePostDto updatePostDto = UpdatePostDto.builder()
+                .title("updateTitle1")
+                .content("updateContent1")
+                .category(Category.ENG)
+                .price(20000L)
+                .build();
+
+        //when
+        postService.updatePost(postId, updatePostDto, member);
+
+        //then
+        Post post = postRepository.findById(postId).get();
+        assertThat(post)
+                .extracting("title", "content", "category", "price")
+                .contains("updateTitle1", "updateContent1", Category.ENG, 20000L);
     }
 }
