@@ -253,4 +253,23 @@ class PostServiceImplTest {
                 .isInstanceOf(AuthException.class)
                 .hasMessage("권한이 없는 사용자입니다.");
     }
+
+    @DisplayName("존재하지 않는 게시글을 삭제하려하면 예외가 발생한다.")
+    @Test
+    public void deletePostEntntyNotFoundException() {
+        //given
+        CreatePostDto createPostDto = CreatePostDto.builder()
+                .title("testTitle1")
+                .content("testContent1")
+                .category(Category.KOR)
+                .price(10000L)
+                .build();
+        Member member = Member.builder().build();
+        postService.createPost(createPostDto, member);
+
+        //when & then
+        assertThatThrownBy(() -> postService.deletePost(99999999L, member))
+                .isInstanceOf(EntityNotFoundException.class)
+                .hasMessage("지정한 Entity를 찾을 수 없습니다.");
+    }
 }
