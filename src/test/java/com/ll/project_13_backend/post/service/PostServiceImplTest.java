@@ -16,6 +16,7 @@ import com.ll.project_13_backend.post.entity.Category;
 import com.ll.project_13_backend.post.entity.Post;
 import com.ll.project_13_backend.post.repository.PostRepository;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -271,5 +272,26 @@ class PostServiceImplTest {
         assertThatThrownBy(() -> postService.deletePost(99999999L, member))
                 .isInstanceOf(EntityNotFoundException.class)
                 .hasMessage("지정한 Entity를 찾을 수 없습니다.");
+    }
+
+    @DisplayName("게시글을 삭제한다.")
+    @Test
+    public void deletePostTest() {
+        //given
+        CreatePostDto createPostDto = CreatePostDto.builder()
+                .title("testTitle1")
+                .content("testContent1")
+                .category(Category.KOR)
+                .price(10000L)
+                .build();
+        Member member = Member.builder().build();
+        Long postId = postService.createPost(createPostDto, member);
+
+        //when
+        postService.deletePost(postId, member);
+
+        //then
+        assertThat(postRepository.existsById(postId))
+                .isEqualTo(false);
     }
 }
