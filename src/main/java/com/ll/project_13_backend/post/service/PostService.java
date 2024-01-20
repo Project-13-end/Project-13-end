@@ -12,4 +12,6 @@ public interface PostService {
     FindPostDto findPost(final Long postId);
 
     void  updatePost(final Long postId, final UpdatePostDto updatePostDto, final Member member);
+
+    void deletePost(final Long postId, final Member member);
 }
