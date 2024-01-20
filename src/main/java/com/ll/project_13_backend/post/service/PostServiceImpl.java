@@ -6,6 +6,7 @@ import com.ll.project_13_backend.global.exception.ErrorCode;
 import com.ll.project_13_backend.member.entity.Member;
 import com.ll.project_13_backend.post.dto.service.CreatePostDto;
 import com.ll.project_13_backend.post.dto.service.FindPostDto;
+import com.ll.project_13_backend.post.dto.service.UpdatePostDto;
 import com.ll.project_13_backend.post.entity.Post;
 import com.ll.project_13_backend.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,16 @@ public class PostServiceImpl implements PostService {
 
         FindPostDto findPostDto = FindPostDto.of(post);
         return findPostDto;
+    }
+
+    @Transactional
+    public void updatePost(final Long postId, final UpdatePostDto updatePostDto, final Member member) {
+        if (member == null) {
+            throw new AuthException(ErrorCode.UNAUTHORIZED_USER);
+        }
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
+        post.updatePost(updatePostDto);
     }
 
     private void checkLogin(Member member) {
