@@ -46,12 +46,23 @@ public class PostServiceImpl implements PostService {
         post.updatePost(updatePostDto);
     }
 
+    @Transactional
+    public void deletePost(final Long postId, final Member member) {
+        checkAuthorized(member);
+//        if (!postRepository.existsById(postId)) { //todo 원하지 않는 예외가 발생함 원인을 모름 물어보자
+//            throw new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND);
+//        }
+//        postRepository.deleteById(postId);
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
+        postRepository.delete(post);
+    }
+
     private static void checkAuthorized(Member member) {
         if (member == null) {
             throw new AuthException(ErrorCode.UNAUTHORIZED_USER);
         }
     }
-
     private void checkLogin(Member member) {
         if (member == null) {
             throw new AuthException(ErrorCode.IS_NOT_LOGIN);
