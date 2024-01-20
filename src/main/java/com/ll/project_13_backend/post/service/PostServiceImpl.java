@@ -40,12 +40,16 @@ public class PostServiceImpl implements PostService {
 
     @Transactional
     public void updatePost(final Long postId, final UpdatePostDto updatePostDto, final Member member) {
-        if (member == null) {
-            throw new AuthException(ErrorCode.UNAUTHORIZED_USER);
-        }
+        checkAuthorized(member);
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
         post.updatePost(updatePostDto);
+    }
+
+    private static void checkAuthorized(Member member) {
+        if (member == null) {
+            throw new AuthException(ErrorCode.UNAUTHORIZED_USER);
+        }
     }
 
     private void checkLogin(Member member) {
