@@ -47,7 +47,7 @@ public class ErrorResponseDto {
         return new ErrorResponseDto(ErrorCode.INVALID_INPUT_VALUE, errors);
     }
 
-
+    @Getter
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
     private static class FieldError {
         private String field;
@@ -67,7 +67,7 @@ public class ErrorResponseDto {
             return errors.stream()
                     .map(error -> new FieldError(
                             error.getField(),
-                            error.getRejectedValue() == null? "" :
+                            error.getRejectedValue() == null ? "" :
                                     error.getRejectedValue().toString(),
                             error.getDefaultMessage()))
                     .toList();
