@@ -8,7 +8,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ll.project_13_backend.member.entity.Member;
 import com.ll.project_13_backend.member.repository.MemberRepository;
 import com.ll.project_13_backend.post.dto.request.CreatePostRequest;
-import com.ll.project_13_backend.post.dto.service.CreatePostDto;
 import com.ll.project_13_backend.test_security.prinipal.MemberPrincipal;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
