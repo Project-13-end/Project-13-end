@@ -133,5 +133,26 @@ class PostControllerTest {
                 );
     }
 
+    @DisplayName("게시글의 가격은 반드시 입력해야합니다.")
+    @Test
+    public void createPostNotInputPrice() throws Exception {
+        CreatePostRequest createPostRequest = CreatePostRequest.builder()
+                .title("titleTest1")
+                .content("contentTest1")
+                .category("categoryTest1")
+                .build();
+
+        memberRepository.save(Member.builder().loginId("user").password("password").build());
+        UserDetails user = memberPrincipal.loadUserByUsername("user");
+
+        mockMvc.perform(post("/post/create")
+                .content(objectMapper.writeValueAsString(createPostRequest))
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(SecurityMockMvcRequestPostProcessors.user(user)))
+                .andExpectAll(
+                        jsonPath("$.code").value("C_002"),
+                        jsonPath("$.message").value("적절하지 않은 요청 값입니다.")
+                );
+    }
 }
 
