@@ -14,8 +14,8 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ErrorResponseDto {
-    private String message;
     private String code;
+    private String message;
     private List<FieldError> errors;
 
     private ErrorResponseDto(final ErrorCode errorCode, List<FieldError> errors) {
