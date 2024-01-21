@@ -2,6 +2,7 @@ package com.ll.project_13_backend.post.controller;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ll.project_13_backend.member.entity.Member;
@@ -62,6 +63,28 @@ class PostControllerTest {
 
     }
 
+    @DisplayName("게시글 제목은 반드시 입력해야 한다.")
+    @Test
+    void createPostNotInputTitle() throws Exception {
+        CreatePostRequest createPostRequest = CreatePostRequest.builder()
+                .content("contentTest1")
+                .category("kor")
+                .price(10000L)
+                .build();
 
+        memberRepository.save(Member.builder().loginId("user").password("password").build());
+        UserDetails user = memberPrincipal.loadUserByUsername("user");
+
+        //when & then
+        mockMvc.perform(post("/post/create")
+                        .content(objectMapper.writeValueAsString(createPostRequest))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(SecurityMockMvcRequestPostProcessors.user(user)))
+                .andDo(print())
+                .andExpectAll(
+                        jsonPath("$.code").value("C_002"),
+                        jsonPath("$.message").value("적절하지 않은 요청 값입니다.")
+                );
+    }
 }
 
