@@ -86,5 +86,28 @@ class PostControllerTest {
                         jsonPath("$.message").value("적절하지 않은 요청 값입니다.")
                 );
     }
+
+    @DisplayName("게시글 내용은 반드시 입력해야 한다.")
+    @Test
+    void createPostNotInputContent() throws Exception {
+        CreatePostRequest createPostRequest = CreatePostRequest.builder()
+                .title("titleTest1")
+                .category("kor")
+                .price(10000L)
+                .build();
+
+        memberRepository.save(Member.builder().loginId("user").password("password").build());
+        UserDetails user = memberPrincipal.loadUserByUsername("user");
+
+        //when & then
+        mockMvc.perform(post("/post/create")
+                        .content(objectMapper.writeValueAsString(createPostRequest))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(SecurityMockMvcRequestPostProcessors.user(user)))
+                .andExpectAll(
+                        jsonPath("$.code").value("C_002"),
+                        jsonPath("$.message").value("적절하지 않은 요청 값입니다.")
+                );
+    }
 }
 
