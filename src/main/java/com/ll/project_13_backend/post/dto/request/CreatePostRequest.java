@@ -12,7 +12,7 @@ public record CreatePostRequest(@NotBlank(message = "제목을 반드시 입력�
                                 @NotBlank(message = "카테고리를 반드시 선택해주세요.") String category,
                                 @NotNull(message = "가격을 반드시 입력해주세요.") Long price) {
 
-    public CreatePostDto createPostRequestTocreatePostDto() {
+    public CreatePostDto toCreatePostDto() {
         CreatePostDto createPostDto = CreatePostDto.builder()
                 .title(title)
                 .content(content)

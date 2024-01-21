@@ -23,7 +23,7 @@ public class PostController {
     public ResponseEntity<Void> createPost(@Valid @RequestBody CreatePostRequest createPostRequest,
                                            @CurrentMember Member member) {
 
-        Long postId = postService.createPost(createPostRequest.createPostRequestTocreatePostDto(), member);
+        Long postId = postService.createPost(createPostRequest.toCreatePostDto(), member);
         return ResponseEntity.created(URI.create("/post/" + postId)).build();
     }
 }
