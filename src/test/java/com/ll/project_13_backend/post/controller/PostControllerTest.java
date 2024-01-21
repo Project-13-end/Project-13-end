@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ll.project_13_backend.member.entity.Member;
 import com.ll.project_13_backend.member.repository.MemberRepository;
 import com.ll.project_13_backend.post.dto.request.CreatePostRequest;
+import com.ll.project_13_backend.post.dto.service.CreatePostDto;
 import com.ll.project_13_backend.test_security.prinipal.MemberPrincipal;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -109,5 +110,28 @@ class PostControllerTest {
                         jsonPath("$.message").value("적절하지 않은 요청 값입니다.")
                 );
     }
+
+    @DisplayName("게시글의 카테고리는 반드시 정해야합니다.")
+    @Test
+    void createPostNotSelectCategory() throws Exception {
+        CreatePostRequest createPostRequest = CreatePostRequest.builder()
+                .title("titleTest1")
+                .content("contentTest1")
+                .price(10000L)
+                .build();
+
+        memberRepository.save(Member.builder().loginId("user").password("password").build());
+        UserDetails user = memberPrincipal.loadUserByUsername("user");
+
+        mockMvc.perform(post("/post/create")
+                .content(objectMapper.writeValueAsString(createPostRequest))
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(SecurityMockMvcRequestPostProcessors.user(user)))
+                .andExpectAll(
+                        jsonPath("$.code").value("C_002"),
+                        jsonPath("$.message").value("적절하지 않은 요청 값입니다.")
+                );
+    }
+
 }
 
