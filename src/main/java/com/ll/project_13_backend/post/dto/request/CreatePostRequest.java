@@ -10,7 +10,7 @@ import lombok.Builder;
 public record CreatePostRequest(@NotBlank(message = "제목을 반드시 입력해주세요.") String title,
                                 @NotBlank(message = "내용을 반드시 입력해주세요.") String content,
                                 @NotBlank(message = "카테고리를 반드시 선택해주세요.") String category,
-                                @NotNull Long price) {
+                                @NotNull(message = "가격을 반드시 입력해주세요.") Long price) {
 
     public CreatePostDto createPostRequestTocreatePostDto() {
         CreatePostDto createPostDto = CreatePostDto.builder()
