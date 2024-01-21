@@ -129,9 +129,9 @@ class PostControllerTest {
         UserDetails user = memberPrincipal.loadUserByUsername("user");
 
         mockMvc.perform(post("/post/create")
-                .content(objectMapper.writeValueAsString(createPostRequest))
-                .contentType(MediaType.APPLICATION_JSON)
-                .with(SecurityMockMvcRequestPostProcessors.user(user)))
+                        .content(objectMapper.writeValueAsString(createPostRequest))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(SecurityMockMvcRequestPostProcessors.user(user)))
                 .andExpectAll(
                         jsonPath("$.code").value("C_002"),
                         jsonPath("$.message").value("적절하지 않은 요청 값입니다."),
@@ -154,9 +154,9 @@ class PostControllerTest {
         UserDetails user = memberPrincipal.loadUserByUsername("user");
 
         mockMvc.perform(post("/post/create")
-                .content(objectMapper.writeValueAsString(createPostRequest))
-                .contentType(MediaType.APPLICATION_JSON)
-                .with(SecurityMockMvcRequestPostProcessors.user(user)))
+                        .content(objectMapper.writeValueAsString(createPostRequest))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(SecurityMockMvcRequestPostProcessors.user(user)))
                 .andExpectAll(
                         jsonPath("$.code").value("C_002"),
                         jsonPath("$.message").value("적절하지 않은 요청 값입니다."),
