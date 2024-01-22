@@ -1,5 +1,6 @@
 package com.ll.project_13_backend.post.controller;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -396,6 +397,18 @@ class PostControllerTest {
         Assertions.assertThat(resultPost)
                 .extracting("title", "content", "category", "price")
                 .contains("updateTitle1", "updateContent1", Category.ENG, 20000L);
+    }
+//todo 게시글 수정 시 비회원이 아니라 회원이지만 작성자가 아닐경우와 존재하지 않는 post를 수정하려 할 시 테스트
+    @DisplayName("권한이 없는 유저는 게시글을 삭제하지 못한다.")
+    @Test
+    public void deletePostUnauthorizedTest() throws Exception {
+        mockMvc.perform(delete("/post/{postId}", 1L)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpectAll(
+                        jsonPath("$.code").value("AU_002"),
+                        jsonPath("$.message").value("권한이 없는 사용자입니다.")
+                );
     }
 }
 
