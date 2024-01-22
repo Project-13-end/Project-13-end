@@ -1,6 +1,8 @@
 package com.ll.project_13_backend.post.entity;
 
 import com.ll.project_13_backend.global.BaseEntity;
+import com.ll.project_13_backend.global.exception.AuthException;
+import com.ll.project_13_backend.global.exception.ErrorCode;
 import com.ll.project_13_backend.member.entity.Member;
 import com.ll.project_13_backend.post.dto.service.UpdatePostDto;
 import jakarta.persistence.Entity;
@@ -47,5 +49,11 @@ public class Post extends BaseEntity {
         this.content = updatePostDto.content();
         this.category = updatePostDto.category();
         this.price = updatePostDto.price();
+    }
+
+    public void checkAuthorized(Member member) {
+        if (!this.member.getId().equals(member.getId())) {
+            throw new AuthException(ErrorCode.UNAUTHORIZED_USER);
+        }
     }
 }
