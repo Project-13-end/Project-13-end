@@ -6,8 +6,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ll.project_13_backend.member.entity.Member;
 import com.ll.project_13_backend.member.repository.MemberRepository;
@@ -15,9 +13,12 @@ import com.ll.project_13_backend.post.dto.request.CreatePostRequest;
 import com.ll.project_13_backend.post.dto.request.UpdatePostRequest;
 import com.ll.project_13_backend.post.dto.service.CreatePostDto;
 import com.ll.project_13_backend.post.entity.Category;
+import com.ll.project_13_backend.post.entity.Post;
+import com.ll.project_13_backend.post.repository.PostRepository;
 import com.ll.project_13_backend.post.service.PostService;
 import com.ll.project_13_backend.test_security.prinipal.MemberPrincipal;
 import jakarta.persistence.EntityManager;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -50,6 +51,9 @@ class PostControllerTest {
 
     @Autowired
     private PostService postService;
+
+    @Autowired
+    private PostRepository postRepository;
 
     @Autowired
     private EntityManager em;
@@ -352,6 +356,46 @@ class PostControllerTest {
                         jsonPath("$.errors[0].value").isEmpty(),
                         jsonPath("$.errors[0].message").value("가격을 반드시 입력해주세요.")
                 );
+    }
+
+    @DisplayName("게시글을 수정한다.")
+    @Test
+    public void updatePostTest() throws Exception {//todo 허..... 리팩토링 필요해 보임
+        //given
+        Member member = Member.builder().id(1L).loginId("user").password("password").build();
+        memberRepository.save(member);
+
+        Post post = Post.builder()
+                .member(member)
+                .title("titleTest1")
+                .content("contentTest1")
+                .category(Category.KOR)
+                .price(20000L)
+                .build();
+
+        postRepository.save(post);
+
+        UpdatePostRequest updatePostRequest = UpdatePostRequest.builder()
+                .title("updateTitle1")
+                .content("updateContent1")
+                .category("eng")
+                .price(20000L)
+                .build();
+
+        UserDetails user = memberPrincipal.loadUserByUsername("user");
+
+        //when
+        mockMvc.perform(put("/post/{postId}", 1L)
+                .content(objectMapper.writeValueAsString(updatePostRequest))
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(SecurityMockMvcRequestPostProcessors.user(user)))
+                .andExpect(status().isOk());
+
+        //then
+        Post resultPost = postRepository.findById(1L).get();
+        Assertions.assertThat(resultPost)
+                .extracting("title", "content", "category", "price")
+                .contains("updateTitle1", "updateContent1", Category.ENG, 20000L);
     }
 }
 
