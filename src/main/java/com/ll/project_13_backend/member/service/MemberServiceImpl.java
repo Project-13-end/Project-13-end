@@ -25,6 +25,11 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    public void login(String loginId, String password) {
+        return;
+    }
+
+    @Override
     public void addCash(Member member, int cash, String event) {
         return;
     }

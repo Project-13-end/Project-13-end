@@ -12,6 +12,9 @@ public interface MemberService {
     // 회원가입
     void join(final String loginId, String password, String name, String email, String phone);
 
+    // 로그인
+    void login(final String loginId, String password);
+
     // 입출금
     void addCash(Member member, int cash, String event);
 

@@ -1,34 +1,26 @@
 package com.ll.project_13_backend.global.initData;
 
-
+import com.ll.project_13_backend.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.core.annotation.Order;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.io.File;
 
 @Configuration
+@Slf4j
 @RequiredArgsConstructor
 public class All {
-    @Autowired
-    @Lazy
-    private All self;
+    private final MemberService memberService;
 
     @Bean
     @Order(2)
-    ApplicationRunner initAll() {
+    public ApplicationRunner initAll() {
         return args -> {
-            self.work1();
-        };
-    }
+            if (memberService.findByUsername("system").isPresent()) return;
 
-    @Transactional
-    public void work1() {
-        new File(AppConfig.getTempDirPath()).mkdirs();
+            memberService.join("admin", "1234");
+        };
     }
 }
