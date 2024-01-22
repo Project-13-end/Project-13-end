@@ -19,6 +19,7 @@ import com.ll.project_13_backend.post.repository.PostRepository;
 import com.ll.project_13_backend.post.service.PostService;
 import com.ll.project_13_backend.test_security.prinipal.MemberPrincipal;
 import jakarta.persistence.EntityManager;
+import java.util.List;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -62,6 +63,7 @@ class PostControllerTest {
     @BeforeEach
     public void setUp() {
         em.createNativeQuery("ALTER TABLE post AUTO_INCREMENT 1").executeUpdate();
+        em.createNativeQuery("ALTER TABLE member AUTO_INCREMENT 1").executeUpdate();
     }
 
     @DisplayName("게시글을 등록한다.")
@@ -398,6 +400,49 @@ class PostControllerTest {
                 .extracting("title", "content", "category", "price")
                 .contains("updateTitle1", "updateContent1", Category.ENG, 20000L);
     }
+
+    @DisplayName("권한이 없는 회원은 게시글을 수정하지 못한다.")
+    @Test
+    public void updatePostUnauthorizedTest2() throws Exception {//todo 허..... 리팩토링 필요해 보임
+        //given
+        Member member = Member.builder().id(1L).loginId("user").password("password").build();
+        Member member2 = Member.builder().id(2L).loginId("user2").password("password").build();
+        memberRepository.saveAll(List.of(member, member2));
+
+
+
+        Post post = Post.builder()
+                .member(memberRepository.findById(2L).get())
+                .title("titleTest1")
+                .content("contentTest1")
+                .category(Category.KOR)
+                .price(20000L)
+                .build();
+
+        postRepository.save(post);
+
+        UpdatePostRequest updatePostRequest = UpdatePostRequest.builder()
+                .title("updateTitle1")
+                .content("updateContent1")
+                .category("eng")
+                .price(20000L)
+                .build();
+
+        UserDetails user = memberPrincipal.loadUserByUsername("user");
+
+        //when
+        mockMvc.perform(put("/post/{postId}", 1L)
+                        .content(objectMapper.writeValueAsString(updatePostRequest))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(SecurityMockMvcRequestPostProcessors.user(user)))
+                .andExpect(status().isBadRequest())
+                .andExpectAll(
+                        jsonPath("$.code").value("AU_002"),
+                        jsonPath("$.message").value("권한이 없는 사용자입니다.")
+                );
+    }
+
+
 //todo 게시글 수정 시 비회원이 아니라 회원이지만 작성자가 아닐경우와 존재하지 않는 post를 수정하려 할 시 테스트
     @DisplayName("권한이 없는 유저는 게시글을 삭제하지 못한다.")
     @Test

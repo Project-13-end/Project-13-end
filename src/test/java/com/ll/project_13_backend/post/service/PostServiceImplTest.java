@@ -214,7 +214,8 @@ class PostServiceImplTest {
                 .category(Category.KOR)
                 .price(10000L)
                 .build();
-        Member member = Member.builder().build();
+        Member member = Member.builder().id(1L).build();
+        memberRepository.save(member);
         Long postId = postService.createPost(createPostDto, member);
 
         UpdatePostDto updatePostDto = UpdatePostDto.builder()
@@ -282,7 +283,8 @@ class PostServiceImplTest {
                 .category(Category.KOR)
                 .price(10000L)
                 .build();
-        Member member = Member.builder().build();
+        Member member = Member.builder().id(1L).build();
+        memberRepository.save(member);
         Long postId = postService.createPost(createPostDto, member);
 
         //when
