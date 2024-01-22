@@ -2,6 +2,7 @@ package com.ll.project_13_backend.post.controller;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -10,9 +11,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ll.project_13_backend.member.entity.Member;
 import com.ll.project_13_backend.member.repository.MemberRepository;
 import com.ll.project_13_backend.post.dto.request.CreatePostRequest;
+import com.ll.project_13_backend.post.dto.request.UpdatePostRequest;
 import com.ll.project_13_backend.post.dto.service.CreatePostDto;
 import com.ll.project_13_backend.post.entity.Category;
-import com.ll.project_13_backend.post.repository.PostRepository;
 import com.ll.project_13_backend.post.service.PostService;
 import com.ll.project_13_backend.test_security.prinipal.MemberPrincipal;
 import jakarta.persistence.EntityManager;
@@ -51,6 +52,7 @@ class PostControllerTest {
 
     @Autowired
     private EntityManager em;
+
     @BeforeEach
     public void setUp() {
         em.createNativeQuery("ALTER TABLE post AUTO_INCREMENT 1").executeUpdate();
@@ -189,7 +191,7 @@ class PostControllerTest {
     public void findPostNotExist() throws Exception {
         //todo controller가 제대로 실행이 되지않음 그 이유 물어보자
         mockMvc.perform(get("/post/{articleId}", 99999)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpectAll(
                         jsonPath("$.code").value("C_001"),
                         jsonPath("$.message").value("지정한 Entity를 찾을 수 없습니다.")
@@ -213,7 +215,7 @@ class PostControllerTest {
 
         //when & then
         mockMvc.perform(get("/post/{articleId}", postId)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpectAll(
                         jsonPath("$.name").value("testName"),
@@ -222,6 +224,37 @@ class PostControllerTest {
                         jsonPath("$.category").value("kor"),
                         jsonPath("$.price").value(10000),
                         jsonPath("$.createdDate").isNotEmpty()
+                );
+    }
+
+    //todo 메소드이름 다시 생각하기
+    @DisplayName("권한이 없는 사용자는 게시글을 수정하지 못한다.")
+    @Test
+    public void updatePostUnauthorizedTest() throws Exception {
+        //given
+        CreatePostDto createPostDto = CreatePostDto.builder()
+                .title("titleTest1")
+                .content("contentTest1")
+                .category(Category.KOR)
+                .price(10000L)
+                .build();
+
+        Member member = Member.builder().name("testName").build();
+        Long postId = postService.createPost(createPostDto, member);
+
+        UpdatePostRequest updatePostRequest = UpdatePostRequest.builder()
+                .title("updateTitle1")
+                .content("updateContent1")
+                .category("eng")
+                .price(20000L).build();
+        //when & then
+        mockMvc.perform(put("/post/{postId}", 1L)
+                .content(objectMapper.writeValueAsString(updatePostRequest))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpectAll(
+                        jsonPath("$.code").value("AU_002"),
+                        jsonPath("$.message").value("권한이 없는 사용자입니다.")
                 );
     }
 }
