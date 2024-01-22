@@ -444,7 +444,7 @@ class PostControllerTest {
 
 
 //todo 게시글 수정 시 비회원이 아니라 회원이지만 작성자가 아닐경우와 존재하지 않는 post를 수정하려 할 시 테스트
-    @DisplayName("권한이 없는 유저는 게시글을 삭제하지 못한다.")
+    @DisplayName("비회원은 게시글을 삭제하지 못한다.")
     @Test
     public void deletePostUnauthorizedTest() throws Exception {
         mockMvc.perform(delete("/post/{postId}", 1L)
