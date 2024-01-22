@@ -4,12 +4,19 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ll.project_13_backend.member.entity.Member;
 import com.ll.project_13_backend.member.repository.MemberRepository;
 import com.ll.project_13_backend.post.dto.request.CreatePostRequest;
+import com.ll.project_13_backend.post.dto.service.CreatePostDto;
+import com.ll.project_13_backend.post.entity.Category;
+import com.ll.project_13_backend.post.repository.PostRepository;
+import com.ll.project_13_backend.post.service.PostService;
 import com.ll.project_13_backend.test_security.prinipal.MemberPrincipal;
+import jakarta.persistence.EntityManager;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +45,16 @@ class PostControllerTest {
 
     @Autowired
     private MemberPrincipal memberPrincipal;
+
+    @Autowired
+    private PostService postService;
+
+    @Autowired
+    private EntityManager em;
+    @BeforeEach
+    public void setUp() {
+        em.createNativeQuery("ALTER TABLE post AUTO_INCREMENT 1").executeUpdate();
+    }
 
     @DisplayName("게시글을 등록한다.")
     @Test
@@ -176,6 +193,35 @@ class PostControllerTest {
                 .andExpectAll(
                         jsonPath("$.code").value("C_001"),
                         jsonPath("$.message").value("지정한 Entity를 찾을 수 없습니다.")
+                );
+    }
+
+    @DisplayName("게시글을 조회한다.")
+    @Test
+    public void findPostTest() throws Exception {
+
+        //given
+        CreatePostDto createPostDto = CreatePostDto.builder()
+                .title("titleTest1")
+                .content("contentTest1")
+                .category(Category.KOR)
+                .price(10000L)
+                .build();
+
+        Member member = Member.builder().name("testName").build();
+        Long postId = postService.createPost(createPostDto, member);
+
+        //when & then
+        mockMvc.perform(get("/post/{articleId}", postId)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpectAll(
+                        jsonPath("$.name").value("testName"),
+                        jsonPath("$.title").value("titleTest1"),
+                        jsonPath("$.content").value("contentTest1"),
+                        jsonPath("$.category").value("kor"),
+                        jsonPath("$.price").value(10000),
+                        jsonPath("$.createdDate").isNotEmpty()
                 );
     }
 }
