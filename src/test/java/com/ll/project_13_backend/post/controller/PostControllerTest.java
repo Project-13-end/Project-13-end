@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ll.project_13_backend.member.entity.Member;
 import com.ll.project_13_backend.member.repository.MemberRepository;
@@ -281,6 +282,28 @@ class PostControllerTest {
                 );
     }
 
+    @DisplayName("게시글 수정 시 내용을 반드시 입력해야한다.")
+    @Test
+    public void updatePostNotInputContentTest() throws Exception {
+        //given
+        UpdatePostRequest updatePostRequest = UpdatePostRequest.builder()
+                .title("titleTest1")
+                .category("kor")
+                .price(10000L)
+                .build();
 
+        //when & then
+        mockMvc.perform(put("/post/{postId}", 1L)
+                .content(objectMapper.writeValueAsString(updatePostRequest))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpectAll(
+                        jsonPath("$.code").value("C_002"),
+                        jsonPath("$.message").value("적절하지 않은 요청 값입니다."),
+                        jsonPath("$.errors[0].field").value("content"),
+                        jsonPath("$.errors[0].value").isEmpty(),
+                        jsonPath("$.errors[0].message").value("내용을 반드시 입력해주세요")
+                );
+    }
 }
 
