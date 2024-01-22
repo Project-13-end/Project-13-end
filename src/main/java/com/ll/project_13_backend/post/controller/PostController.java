@@ -2,12 +2,15 @@ package com.ll.project_13_backend.post.controller;
 
 import com.ll.project_13_backend.member.entity.Member;
 import com.ll.project_13_backend.post.dto.request.CreatePostRequest;
+import com.ll.project_13_backend.post.dto.response.FindPostResponse;
 import com.ll.project_13_backend.post.service.PostService;
 import com.ll.project_13_backend.test_security.prinipal.CurrentMember;
 import jakarta.validation.Valid;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,5 +28,12 @@ public class PostController {
 
         Long postId = postService.createPost(createPostRequest.toCreatePostDto(), member);
         return ResponseEntity.created(URI.create("/post/" + postId)).build();
+    }
+
+    @GetMapping("/{articleId}")
+    public ResponseEntity<FindPostResponse> findPost(@PathVariable("articleId") Long articleId) {
+
+        FindPostResponse findPostResponse = FindPostResponse.of(postService.findPost(articleId));
+        return ResponseEntity.ok(findPostResponse);
     }
 }
