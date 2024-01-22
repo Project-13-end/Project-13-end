@@ -1,5 +1,6 @@
 package com.ll.project_13_backend.post.controller;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -163,6 +164,18 @@ class PostControllerTest {
                         jsonPath("$.errors[0].field").value("price"),
                         jsonPath("$.errors[0].value").isEmpty(),
                         jsonPath("$.errors[0].message").value("가격을 반드시 입력해주세요.")
+                );
+    }
+
+    @DisplayName("존재하지 않는 게시글을 조회하면 예외가 발생한다.")
+    @Test
+    public void findPostNotExist() throws Exception {
+        //todo controller가 제대로 실행이 되지않음 그 이유 물어보자
+        mockMvc.perform(get("/post/{articleId}", 99999)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpectAll(
+                        jsonPath("$.code").value("C_001"),
+                        jsonPath("$.message").value("지정한 Entity를 찾을 수 없습니다.")
                 );
     }
 }
