@@ -30,10 +30,10 @@ public class PostController {
         return ResponseEntity.created(URI.create("/post/" + postId)).build();
     }
 
-    @GetMapping("/{articleId}")
-    public ResponseEntity<FindPostResponse> findPost(@PathVariable("articleId") Long articleId) {
+    @GetMapping("/{postId}")
+    public ResponseEntity<FindPostResponse> findPost(@PathVariable("postId") Long postId) {
 
-        FindPostResponse findPostResponse = FindPostResponse.of(postService.findPost(articleId));
+        FindPostResponse findPostResponse = FindPostResponse.of(postService.findPost(postId));
         return ResponseEntity.ok(findPostResponse);
     }
 }
