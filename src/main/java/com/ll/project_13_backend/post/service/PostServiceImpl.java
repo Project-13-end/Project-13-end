@@ -24,7 +24,7 @@ public class PostServiceImpl implements PostService {
     public Long createPost(final CreatePostDto createPostDto, final Member member) {
         checkLogin(member);
         //todo member객체를 넣어도 괜찮나 더 좋은 방법이 없나에 대해 생각
-        Post post = createPostDto.createPostDtoToPost(member);
+        Post post = createPostDto.toPost(member);
         Post id = postRepository.save(post);
 
         return id.getId();

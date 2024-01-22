@@ -8,7 +8,7 @@ import lombok.Builder;
 @Builder
 public record CreatePostDto(String title, String content, Category category, Long price) {
 
-    public Post createPostDtoToPost(Member member) {
+    public Post toPost(Member member) {
         Post post = Post.builder()
                 .member(member)
                 .title(title)
