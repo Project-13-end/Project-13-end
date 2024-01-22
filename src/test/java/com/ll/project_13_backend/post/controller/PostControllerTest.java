@@ -455,5 +455,35 @@ class PostControllerTest {
                         jsonPath("$.message").value("권한이 없는 사용자입니다.")
                 );
     }
+
+    @DisplayName("권한이 없는 회원은 게시글을 삭제하지 못한다.")
+    @Test
+    public void deletePostMemberUnauthorizedTest() throws Exception {
+        //given
+        Member member = Member.builder().id(1L).loginId("user").password("password").build();
+        Member member2 = Member.builder().id(2L).loginId("user2").password("password").build();
+        memberRepository.saveAll(List.of(member, member2));
+
+        Post post = Post.builder()
+                .member(memberRepository.findById(2L).get())
+                .title("titleTest1")
+                .content("contentTest1")
+                .category(Category.KOR)
+                .price(20000L)
+                .build();
+
+        postRepository.save(post);
+        UserDetails user = memberPrincipal.loadUserByUsername("user");
+
+        //when & then
+        mockMvc.perform(delete("/post/{postId}", 1L)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(SecurityMockMvcRequestPostProcessors.user(user)))
+                .andExpect(status().isBadRequest())
+                .andExpectAll(
+                        jsonPath("$.code").value("AU_002"),
+                        jsonPath("$.message").value("권한이 없는 사용자입니다.")
+                );
+    }
 }
 
