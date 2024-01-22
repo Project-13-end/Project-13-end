@@ -329,5 +329,29 @@ class PostControllerTest {
                         jsonPath("$.errors[0].message").value("카테고리를 반드시 선택해주세요.")
                 );
     }
+
+    @DisplayName("게시글 수정 시 가격을 반드시 입력해야한다.")
+    @Test
+    public void updatePostNotInputPriceTest() throws Exception {
+        //given
+        UpdatePostRequest updatePostRequest = UpdatePostRequest.builder()
+                .title("titleTest1")
+                .content("contentTest1")
+                .category("kor")
+                .build();
+
+        //when & then
+        mockMvc.perform(put("/post/{postId}", 1L)
+                        .content(objectMapper.writeValueAsString(updatePostRequest))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpectAll(
+                        jsonPath("$.code").value("C_002"),
+                        jsonPath("$.message").value("적절하지 않은 요청 값입니다."),
+                        jsonPath("$.errors[0].field").value("price"),
+                        jsonPath("$.errors[0].value").isEmpty(),
+                        jsonPath("$.errors[0].message").value("가격을 반드시 입력해주세요.")
+                );
+    }
 }
 
