@@ -260,7 +260,7 @@ class PostControllerTest {
 
     @DisplayName("게시글 수정 시 제목을 반드시 입력해야한다.")
     @Test
-    public void updatePostNotInputTest() throws Exception {
+    public void updatePostNotInputTitleTest() throws Exception {
         //given
         UpdatePostRequest updatePostRequest = UpdatePostRequest.builder()
                 .content("contentTest1")
@@ -280,5 +280,7 @@ class PostControllerTest {
                         jsonPath("$.errors[0].message").value("제목을 반드시 입력해주세요")
                 );
     }
+
+
 }
 
