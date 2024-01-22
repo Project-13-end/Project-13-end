@@ -485,5 +485,25 @@ class PostControllerTest {
                         jsonPath("$.message").value("권한이 없는 사용자입니다.")
                 );
     }
+
+    @DisplayName("존재하지 않는 게시글은 삭제하지 못한다.")
+    @Test
+    public void deletePostNotExistTest() throws Exception {
+        //given
+        Member member = Member.builder().id(1L).loginId("user").password("password").build();
+        memberRepository.save(member);
+
+        UserDetails user = memberPrincipal.loadUserByUsername("user");
+
+        //when & then
+        mockMvc.perform(delete("/post/{postId}", 999999999L)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(SecurityMockMvcRequestPostProcessors.user(user)))
+                .andExpect(status().isBadRequest())
+                .andExpectAll(
+                        jsonPath("$.code").value("C_001"),
+                        jsonPath("$.message").value("지정한 Entity를 찾을 수 없습니다.")
+                );
+    }
 }
 
