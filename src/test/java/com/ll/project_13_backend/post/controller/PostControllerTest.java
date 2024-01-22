@@ -505,5 +505,40 @@ class PostControllerTest {
                         jsonPath("$.message").value("지정한 Entity를 찾을 수 없습니다.")
                 );
     }
+
+    @DisplayName("게시글을 삭제한다.")
+    @Test
+    public void deletePostTest() throws Exception {
+        //given
+        Member member = Member.builder().id(1L).loginId("user").password("password").build();
+        memberRepository.save(member);
+
+        Post post = Post.builder()
+                .member(memberRepository.findById(1L).get())
+                .title("titleTest1")
+                .content("contentTest1")
+                .category(Category.KOR)
+                .price(20000L)
+                .build();
+
+        postRepository.save(post);
+
+        UserDetails user = memberPrincipal.loadUserByUsername("user");
+
+        //when
+        mockMvc.perform(delete("/post/{postId}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(SecurityMockMvcRequestPostProcessors.user(user)))
+                .andExpect(status().isNoContent());
+
+        mockMvc.perform(delete("/post/{postId}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(SecurityMockMvcRequestPostProcessors.user(user)))
+                .andExpect(status().isBadRequest())
+                .andExpectAll(
+                        jsonPath("$.code").value("C_001"),
+                        jsonPath("$.message").value("지정한 Entity를 찾을 수 없습니다.")
+                );
+    }
 }
 
