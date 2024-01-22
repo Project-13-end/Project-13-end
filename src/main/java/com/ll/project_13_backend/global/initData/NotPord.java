@@ -1,17 +1,8 @@
-package com.ll.mb.global.initData;
+package com.ll.project_13_backend.global.initData;
 
-import com.ll.mb.domain.book.book.entity.Book;
-import com.ll.mb.domain.book.book.service.BookService;
-import com.ll.mb.domain.cash.cash.entity.CashLog;
-import com.ll.mb.domain.cash.withdraw.service.WithdrawService;
-import com.ll.mb.domain.member.member.entity.Member;
-import com.ll.mb.domain.member.member.service.MemberService;
-import com.ll.mb.domain.product.cart.service.CartService;
-import com.ll.mb.domain.product.order.entity.Order;
-import com.ll.mb.domain.product.order.service.OrderService;
-import com.ll.mb.domain.product.product.entity.Product;
-import com.ll.mb.domain.product.product.service.ProductService;
+
 import com.ll.project_13_backend.comment.entity.Comment;
+import com.ll.project_13_backend.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
@@ -54,29 +45,29 @@ public class NotProd {
         Member memberUser4 = memberService.join("user4", "1234", "유저4").getData();
         Member memberUser5 = memberService.join("user5", "1234", "유저5").getData();
 
-        Comment comment1 = bookService.createBook(memberUser1, "게시글 제목 1", "게시글 내용 1", 10_000, true);
-        Comment comment2 = bookService.createBook(memberUser2, "게시글 제목 2", "게시글 내용 2", 20_000, true);
-        Comment comment3 = bookService.createBook(memberUser2, "게시글 제목 3", "게시글 내용 3", 30_000, true);
-        Comment comment4 = bookService.createBook(memberUser3, "게시글 제목 4", "게시글 내용 4", 40_000, true);
-        Comment comment5 = bookService.createBook(memberUser3, "게시글 제목 5", "게시글 내용 5", 15_000, true);
-        Comment comment6 = bookService.createBook(memberUser3, "게시글 제목 6", "게시글 내용 6", 20_000, true);
+        Comment comment1 = postService.createPost(memberUser1, "게시글 제목 1", "게시글 내용 1", 10_000, true);
+        Comment comment2 = postService.createPost(memberUser2, "게시글 제목 2", "게시글 내용 2", 20_000, true);
+        Comment comment3 = postService.createPost(memberUser2, "게시글 제목 3", "게시글 내용 3", 30_000, true);
+        Comment comment4 = postService.createPost(memberUser3, "게시글 제목 4", "게시글 내용 4", 40_000, true);
+        Comment comment5 = postService.createPost(memberUser3, "게시글 제목 5", "게시글 내용 5", 15_000, true);
+        Comment comment6 = postService.createPost(memberUser3, "게시글 제목 6", "게시글 내용 6", 20_000, true);
 
-        Product product1 = productService.createProduct(comment3, true);
-        Product product2 = productService.createProduct(comment4, true);
-        Product product3 = productService.createProduct(comment5, true);
-        Product product4 = productService.createProduct(comment6, true);
+        Product product1 = postService.createProduct(comment3, true);
+        Product product2 = postService.createProduct(comment4, true);
+        Product product3 = postService.createProduct(comment5, true);
+        Product product4 = postService.createProduct(comment6, true);
 
-        cartService.addItem(memberUser1, product1);
-        cartService.addItem(memberUser1, product2);
-        cartService.addItem(memberUser1, product3);
+        postService.addItem(memberUser1, product1);
+        postService.addItem(memberUser1, product2);
+        postService.addItem(memberUser1, product3);
 
-        cartService.addItem(memberUser2, product1);
-        cartService.addItem(memberUser2, product2);
-        cartService.addItem(memberUser2, product3);
+        postService.addItem(memberUser2, product1);
+        postService.addItem(memberUser2, product2);
+        postService.addItem(memberUser2, product3);
 
-        cartService.addItem(memberUser3, product1);
-        cartService.addItem(memberUser3, product2);
-        cartService.addItem(memberUser3, product3);
+        postService.addItem(memberUser3, product1);
+        postService.addItem(memberUser3, product2);
+        postService.addItem(memberUser3, product3);
 
         memberService.addCash(memberUser1, 150_000, CashLog.EvenType.충전__무통장입금, memberUser1);
         memberService.addCash(memberUser1, -20_000, CashLog.EvenType.출금__통장입금, memberUser1);
@@ -101,9 +92,9 @@ public class NotProd {
 
         memberService.addCash(memberUser4, 150_000, CashLog.EvenType.충전__무통장입금, memberUser4);
 
-        cartService.addItem(memberUser4, product1);
-        cartService.addItem(memberUser4, product2);
-        cartService.addItem(memberUser4, product3);
+        postService.addItem(memberUser4, product1);
+        postService.addItem(memberUser4, product2);
+        postService.addItem(memberUser4, product3);
 
         Order order4 = orderService.createFromCart(memberUser4);
 
