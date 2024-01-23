@@ -6,4 +6,5 @@ import org.springframework.data.domain.Slice;
 
 public interface CustomPostRepository {
     Slice<FindAllPostDto> findAllPost(final Pageable pageable);
+    Slice<FindAllPostDto> findAllPostByKeyword(final Pageable pageable, final String keyword);
 }
