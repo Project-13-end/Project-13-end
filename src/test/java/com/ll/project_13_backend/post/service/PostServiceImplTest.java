@@ -361,4 +361,73 @@ class PostServiceImplTest {
         assertThat(slice2.getContent().size()).isEqualTo(16);
         assertThat(slice3.getContent().size()).isEqualTo(0);
     }
+
+    @DisplayName("제목을 기준으로 OR 검색을 한다.")
+    @Test
+    public void findAllPostByKeywordTest() {
+        CreatePostDto createPostDto1 = CreatePostDto.builder()
+                .title("testTitle1")
+                .content("testContent1")
+                .category(Category.KOR)
+                .price(10000L)
+                .build();
+
+        CreatePostDto createPostDto2 = CreatePostDto.builder()
+                .title("testTitle2")
+                .content("testContent2")
+                .category(Category.ENG)
+                .price(20000L)
+                .build();
+
+        CreatePostDto createPostDto3 = CreatePostDto.builder()
+                .title("testTitle3")
+                .content("testContent3")
+                .category(Category.MATH)
+                .price(30000L)
+                .build();
+
+        CreatePostDto createPostDto4 = CreatePostDto.builder()
+                .title("3321")
+                .content("testContent3")
+                .category(Category.MATH)
+                .price(30000L)
+                .build();
+
+        Member member1 = Member.builder()
+                .name("name1")
+                .build();
+        Member member2 = Member.builder()
+                .name("name2")
+                .build();
+        Member member3 = Member.builder()
+                .name("name3")
+                .build();
+
+        memberRepository.saveAll(List.of(member1, member2, member3));
+
+        for (int i = 0; i < 25; i++) {
+            postService.createPost(createPostDto1, member1);
+            postService.createPost(createPostDto2, member2);
+            postService.createPost(createPostDto3, member3);
+            postService.createPost(createPostDto3, member3);
+        }
+
+        //when
+        Slice<FindAllPostDto> slice1 = postService.findAllPostByKeyword(0,"Title1");
+        Slice<FindAllPostDto> slice2 = postService.findAllPostByKeyword(0, "Title2");
+        Slice<FindAllPostDto> slice3 = postService.findAllPostByKeyword(0,"Title3");
+
+        //then
+        for (FindAllPostDto findAllPostDto : slice1.getContent()) {
+            assertThat(findAllPostDto.getTitle()).isEqualTo("testTitle1");
+        }
+
+        for (FindAllPostDto findAllPostDto : slice2.getContent()) {
+            assertThat(findAllPostDto.getTitle()).isEqualTo("testTitle2");
+        }
+
+        for (FindAllPostDto findAllPostDto : slice3.getContent()) {
+            assertThat(findAllPostDto.getTitle()).isEqualTo("testTitle3");
+        }
+    }
 }
