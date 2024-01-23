@@ -2,8 +2,10 @@ package com.ll.project_13_backend.post.service;
 
 import com.ll.project_13_backend.member.entity.Member;
 import com.ll.project_13_backend.post.dto.service.CreatePostDto;
+import com.ll.project_13_backend.post.dto.service.FindAllPostDto;
 import com.ll.project_13_backend.post.dto.service.FindPostDto;
 import com.ll.project_13_backend.post.dto.service.UpdatePostDto;
+import org.springframework.data.domain.Slice;
 
 public interface PostService {
 
@@ -14,4 +16,6 @@ public interface PostService {
     void  updatePost(final Long postId, final UpdatePostDto updatePostDto, final Member member);
 
     void deletePost(final Long postId, final Member member);
+
+    Slice<FindAllPostDto> findAllPost(final int page);
 }
