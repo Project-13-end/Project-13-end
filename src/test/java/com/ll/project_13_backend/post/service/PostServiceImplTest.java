@@ -9,6 +9,7 @@ import com.ll.project_13_backend.global.exception.EntityNotFoundException;
 import com.ll.project_13_backend.member.entity.Member;
 import com.ll.project_13_backend.member.repository.MemberRepository;
 import com.ll.project_13_backend.post.dto.service.CreatePostDto;
+import com.ll.project_13_backend.post.dto.service.FindAllPostDto;
 import com.ll.project_13_backend.post.dto.service.FindPostDto;
 import com.ll.project_13_backend.post.dto.service.UpdatePostDto;
 import com.ll.project_13_backend.post.entity.Category;
@@ -21,6 +22,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Slice;
 import org.springframework.transaction.annotation.Transactional;
 
 //todo 통합 테스트 시 id가 보장받지 못하는 상황을 어떻게 처리해야 하는가 생각해보자
@@ -304,5 +306,59 @@ class PostServiceImplTest {
         //then
         assertThat(postRepository.existsById(postId))
                 .isEqualTo(false);
+    }
+
+    //todo 테스트 코드할 때 검증코드를 어디까지 써야할 지 모르겠음 좀 더 생각해보자
+    @DisplayName("메인페이지에서 모든 post를 20개씩 출력한다.")
+    @Test
+    public void findAllPost() {
+        //given
+        CreatePostDto createPostDto1 = CreatePostDto.builder()
+                .title("testTitle1")
+                .content("testContent1")
+                .category(Category.KOR)
+                .price(10000L)
+                .build();
+
+        CreatePostDto createPostDto2 = CreatePostDto.builder()
+                .title("testTitle2")
+                .content("testContent2")
+                .category(Category.ENG)
+                .price(20000L)
+                .build();
+
+        CreatePostDto createPostDto3 = CreatePostDto.builder()
+                .title("testTitle3")
+                .content("testContent3")
+                .category(Category.MATH)
+                .price(30000L)
+                .build();
+
+        Member member1 = Member.builder()
+                .name("name1")
+                .build();
+        Member member2 = Member.builder()
+                .name("name2")
+                .build();
+        Member member3 = Member.builder()
+                .name("name3")
+                .build();
+
+        memberRepository.saveAll(List.of(member1, member2, member3));
+
+        for (int i = 0; i < 12; i++) {
+            postService.createPost(createPostDto1, member1);
+            postService.createPost(createPostDto2, member2);
+            postService.createPost(createPostDto3, member3);
+        }
+        //when
+        Slice<FindAllPostDto> slice1 = postService.findAllPost(0);
+        Slice<FindAllPostDto> slice2 = postService.findAllPost(1);
+        Slice<FindAllPostDto> slice3 = postService.findAllPost(2);
+
+        //then
+        assertThat(slice1.getContent().size()).isEqualTo(20);
+        assertThat(slice2.getContent().size()).isEqualTo(16);
+        assertThat(slice3.getContent().size()).isEqualTo(0);
     }
 }
