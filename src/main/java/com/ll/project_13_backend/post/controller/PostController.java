@@ -35,6 +35,14 @@ public class PostController {
         return ResponseEntity.ok(findAllPostResponses);
     }
 
+    @GetMapping("search")
+    public ResponseEntity<Slice<FindAllPostResponse>> findSearchAll(@RequestParam(defaultValue = "0") int page,
+                                                                 @RequestParam(defaultValue = "") String keyword) {
+        Slice<FindAllPostResponse> findAllPostResponseSlice =
+                FindAllPostResponse.of(postService.findAllPostByKeyword(page, keyword));
+        return ResponseEntity.ok(findAllPostResponseSlice);
+    }
+
     @PostMapping("/create")
     public ResponseEntity<Void> createPost(@Valid @RequestBody CreatePostRequest createPostRequest,
                                            @CurrentMember Member member) {
