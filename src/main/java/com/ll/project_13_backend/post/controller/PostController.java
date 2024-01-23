@@ -3,12 +3,15 @@ package com.ll.project_13_backend.post.controller;
 import com.ll.project_13_backend.member.entity.Member;
 import com.ll.project_13_backend.post.dto.request.CreatePostRequest;
 import com.ll.project_13_backend.post.dto.request.UpdatePostRequest;
+import com.ll.project_13_backend.post.dto.response.FindAllPostResponse;
 import com.ll.project_13_backend.post.dto.response.FindPostResponse;
 import com.ll.project_13_backend.post.service.PostService;
 import com.ll.project_13_backend.test_security.prinipal.CurrentMember;
 import jakarta.validation.Valid;
+import jakarta.websocket.server.PathParam;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -24,6 +28,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/post")
 public class PostController {
     private final PostService postService;
+
+    @GetMapping
+    public ResponseEntity<Slice<FindAllPostResponse>> findAll(@RequestParam(defaultValue = "0") int page) {
+        Slice<FindAllPostResponse> findAllPostResponses = FindAllPostResponse.of(postService.findAllPost(page));
+        return ResponseEntity.ok(findAllPostResponses);
+    }
 
     @PostMapping("/create")
     public ResponseEntity<Void> createPost(@Valid @RequestBody CreatePostRequest createPostRequest,
