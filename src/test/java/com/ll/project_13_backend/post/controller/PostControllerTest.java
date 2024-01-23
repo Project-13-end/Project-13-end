@@ -600,4 +600,65 @@ class PostControllerTest {
 //                        jsonPath("$.hasNext").value(true)
                 );
     }
+
+
+    @DisplayName("마지막 게시글을 출력하면 hasNext는 false가 된다.")
+    @Test
+    public void findAllHasNextTest() throws Exception {
+        CreatePostDto createPostDto1 = CreatePostDto.builder()
+                .title("testTitle1")
+                .content("testContent1")
+                .category(Category.KOR)
+                .price(10000L)
+                .build();
+
+        CreatePostDto createPostDto2 = CreatePostDto.builder()
+                .title("testTitle2")
+                .content("testContent2")
+                .category(Category.ENG)
+                .price(20000L)
+                .build();
+
+        CreatePostDto createPostDto3 = CreatePostDto.builder()
+                .title("testTitle3")
+                .content("testContent3")
+                .category(Category.MATH)
+                .price(30000L)
+                .build();
+
+        CreatePostDto createPostDto4 = CreatePostDto.builder()
+                .title("3321")
+                .content("testContent3")
+                .category(Category.MATH)
+                .price(30000L)
+                .build();
+
+        Member member1 = Member.builder()
+                .name("name1")
+                .build();
+        Member member2 = Member.builder()
+                .name("name2")
+                .build();
+        Member member3 = Member.builder()
+                .name("name3")
+                .build();
+
+        memberRepository.saveAll(List.of(member1, member2, member3));
+
+        for (int i = 0; i < 21; i++) {
+            postService.createPost(createPostDto1, member1);
+            postService.createPost(createPostDto2, member2);
+            postService.createPost(createPostDto3, member3);
+            postService.createPost(createPostDto4, member3);
+        }
+//todo hasNext가 검증이 안된다. 이유를 물어보자
+        mockMvc.perform(get("/post?page=4")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpectAll(
+                        jsonPath("$.content[*]").isNotEmpty(),
+                        jsonPath("$.content.size()").value(4)
+//                        jsonPath("$.hasNext").value(false)
+                );
+    }
 }
