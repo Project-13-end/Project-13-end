@@ -1,7 +1,6 @@
 package com.ll.project_13_backend.post.dto.service;
 
 import com.ll.project_13_backend.post.entity.Category;
-import com.ll.project_13_backend.post.entity.Post;
 import com.querydsl.core.annotations.QueryProjection;
 import java.time.LocalDateTime;
 import lombok.Builder;
