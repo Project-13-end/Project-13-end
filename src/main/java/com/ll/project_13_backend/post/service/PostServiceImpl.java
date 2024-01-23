@@ -6,11 +6,18 @@ import com.ll.project_13_backend.global.exception.ErrorCode;
 import com.ll.project_13_backend.member.entity.Member;
 import com.ll.project_13_backend.member.repository.MemberRepository;
 import com.ll.project_13_backend.post.dto.service.CreatePostDto;
+import com.ll.project_13_backend.post.dto.service.FindAllPostDto;
 import com.ll.project_13_backend.post.dto.service.FindPostDto;
 import com.ll.project_13_backend.post.dto.service.UpdatePostDto;
 import com.ll.project_13_backend.post.entity.Post;
 import com.ll.project_13_backend.post.repository.PostRepository;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +28,14 @@ public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
+
+    public Slice<FindAllPostDto> findAllPost(final int page) {
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.desc("createdDate"));
+        Pageable pageable = PageRequest.of(page, 20,Sort.by(sorts));
+        Slice<FindAllPostDto> slice = postRepository.findAllPost(pageable);
+        return slice;
+    }
 
     @Transactional
     public Long createPost(final CreatePostDto createPostDto, final Member member) {
