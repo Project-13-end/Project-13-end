@@ -18,4 +18,6 @@ public interface PostService {
     void deletePost(final Long postId, final Member member);
 
     Slice<FindAllPostDto> findAllPost(final int page);
+
+    Slice<FindAllPostDto> findAllPostByKeyword(final int page, final String keyword);
 }

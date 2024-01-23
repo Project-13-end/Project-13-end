@@ -36,6 +36,14 @@ public class PostServiceImpl implements PostService {
         Slice<FindAllPostDto> slice = postRepository.findAllPost(pageable);
         return slice;
     }
+//todo 중복된 코드에 대해 생각해보자
+    public Slice<FindAllPostDto> findAllPostByKeyword(final int page, final String keyword) {
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.desc("createdDate"));
+        Pageable pageable = PageRequest.of(page, 20,Sort.by(sorts));
+        Slice<FindAllPostDto> slice = postRepository.findAllPostByKeyword(pageable, keyword);
+        return slice;
+    }
 
     @Transactional
     public Long createPost(final CreatePostDto createPostDto, final Member member) {
