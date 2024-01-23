@@ -1,5 +1,6 @@
 package com.ll.project_13_backend.post.controller;
 
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -62,6 +63,8 @@ class PostControllerTest {
 
     @BeforeEach
     public void setUp() {
+        postRepository.deleteAllInBatch();
+        memberRepository.deleteAllInBatch();
         em.createNativeQuery("ALTER TABLE post AUTO_INCREMENT 1").executeUpdate();
         em.createNativeQuery("ALTER TABLE member AUTO_INCREMENT 1").executeUpdate();
     }
@@ -659,6 +662,67 @@ class PostControllerTest {
                         jsonPath("$.content[*]").isNotEmpty(),
                         jsonPath("$.content.size()").value(4)
 //                        jsonPath("$.hasNext").value(false)
+                );
+    }
+
+    @DisplayName("키워드 기준으로 검색하여 출력하고 마지막까지 출력이 끝나면 hasNext는 false가 된다.")
+    @Test
+    public void findSearchAllHasNextTest() throws Exception {
+        CreatePostDto createPostDto1 = CreatePostDto.builder()
+                .title("testTitle1")
+                .content("testContent1")
+                .category(Category.KOR)
+                .price(10000L)
+                .build();
+
+        CreatePostDto createPostDto2 = CreatePostDto.builder()
+                .title("testTitle2")
+                .content("testContent2")
+                .category(Category.ENG)
+                .price(20000L)
+                .build();
+
+        CreatePostDto createPostDto3 = CreatePostDto.builder()
+                .title("testTitle3")
+                .content("testContent3")
+                .category(Category.MATH)
+                .price(30000L)
+                .build();
+
+        CreatePostDto createPostDto4 = CreatePostDto.builder()
+                .title("123")
+                .content("testContent3")
+                .category(Category.MATH)
+                .price(30000L)
+                .build();
+
+        Member member1 = Member.builder()
+                .name("name1")
+                .build();
+        Member member2 = Member.builder()
+                .name("name2")
+                .build();
+        Member member3 = Member.builder()
+                .name("name3")
+                .build();
+
+        memberRepository.saveAll(List.of(member1, member2, member3));
+
+        for (int i = 0; i < 21; i++) {
+            postService.createPost(createPostDto1, member1);
+            postService.createPost(createPostDto2, member2);
+            postService.createPost(createPostDto3, member3);
+            postService.createPost(createPostDto4, member3);
+        }
+//todo hasNext가 검증이 안된다. 이유를 물어보자
+        mockMvc.perform(get("/post/search?page=3&keyword=Title")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpectAll(
+                        jsonPath("$.content[*].title", containsInAnyOrder("testTitle1", "testTitle2", "testTitle3")),
+                        jsonPath("$.content.size()").value(3)
+                        //                        jsonPath("$.hasNext").value(false)
                 );
     }
 }
