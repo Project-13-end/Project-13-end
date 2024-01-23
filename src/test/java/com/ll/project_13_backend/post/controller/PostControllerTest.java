@@ -588,7 +588,7 @@ class PostControllerTest {
             postService.createPost(createPostDto1, member1);
             postService.createPost(createPostDto2, member2);
             postService.createPost(createPostDto3, member3);
-            postService.createPost(createPostDto3, member3);
+            postService.createPost(createPostDto4, member3);
         }
 //todo hasNext가 검증이 안된다. 이유를 물어보자
         mockMvc.perform(get("/post")
