@@ -14,7 +14,9 @@ import com.ll.project_13_backend.post.dto.service.UpdatePostDto;
 import com.ll.project_13_backend.post.entity.Category;
 import com.ll.project_13_backend.post.entity.Post;
 import com.ll.project_13_backend.post.repository.PostRepository;
+import jakarta.persistence.EntityManager;
 import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +36,15 @@ class PostServiceImplTest {
 
     @Autowired
     private MemberRepository memberRepository;
+
+    @Autowired
+    private EntityManager em;
+
+    @BeforeEach
+    public void setUp() {
+        em.createNativeQuery("ALTER TABLE post AUTO_INCREMENT 1").executeUpdate();
+        em.createNativeQuery("ALTER TABLE member AUTO_INCREMENT 1").executeUpdate();
+    }
 
     @DisplayName("게시글을 만든다.")
     @Test
