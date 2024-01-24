@@ -30,18 +30,18 @@ public class PostServiceImpl implements PostService {
     private final MemberRepository memberRepository;
 
     public Slice<FindAllPostDto> findAllPost(final int page) {
-        List<Sort.Order> sorts = new ArrayList<>();
+        final List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.desc("createdDate"));
-        Pageable pageable = PageRequest.of(page, 20,Sort.by(sorts));
-        Slice<FindAllPostDto> slice = postRepository.findAllPost(pageable);
+        final Pageable pageable = PageRequest.of(page, 20,Sort.by(sorts));
+        final Slice<FindAllPostDto> slice = postRepository.findAllPost(pageable);
         return slice;
     }
 //todo 중복된 코드에 대해 생각해보자
     public Slice<FindAllPostDto> findAllPostByKeyword(final int page, final String keyword) {
-        List<Sort.Order> sorts = new ArrayList<>();
+        final List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.desc("createdDate"));
-        Pageable pageable = PageRequest.of(page, 20,Sort.by(sorts));
-        Slice<FindAllPostDto> slice = postRepository.findAllPostByKeyword(pageable, keyword);
+        final Pageable pageable = PageRequest.of(page, 20,Sort.by(sorts));
+        final Slice<FindAllPostDto> slice = postRepository.findAllPostByKeyword(pageable, keyword);
         return slice;
     }
 
@@ -49,24 +49,24 @@ public class PostServiceImpl implements PostService {
     public Long createPost(final CreatePostDto createPostDto, final Member member) {
         checkLogin(member);
         //todo member객체를 넣어도 괜찮나 더 좋은 방법이 없나에 대해 생각
-        Post post = createPostDto.toPost(member);
-        Post id = postRepository.save(post);
+        final Post post = createPostDto.toPost(member);
+        final Post id = postRepository.save(post);
 
         return id.getId();
     }
 
     public FindPostDto findPost(final Long postId) {
-        Post post = postRepository.findById(postId)
+        final Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
 
-        FindPostDto findPostDto = FindPostDto.of(post);
+        final FindPostDto findPostDto = FindPostDto.of(post);
         return findPostDto;
     }
 
     @Transactional
     public void updatePost(final Long postId, final UpdatePostDto updatePostDto, final Member member) {
         checkAnonymous(member);
-        Post post = postRepository.findById(postId)
+        final Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
         post.checkAuthorized(member);
         post.updatePost(updatePostDto);
@@ -79,19 +79,19 @@ public class PostServiceImpl implements PostService {
 //            throw new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND);
 //        }
 //        postRepository.deleteById(postId);
-        Post post = postRepository.findById(postId)
+        final Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
         post.checkAuthorized(member);
         postRepository.delete(post);
     }
 
-    private static void checkAnonymous(Member member) {
+    private static void checkAnonymous(final Member member) {
         if (member == null) {
             throw new AuthException(ErrorCode.UNAUTHORIZED_USER);
         }
     }
 
-    private void checkLogin(Member member) {
+    private void checkLogin(final Member member) {
         if (member == null) {
             throw new AuthException(ErrorCode.IS_NOT_LOGIN);
         }
