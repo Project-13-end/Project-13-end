@@ -1,7 +1,8 @@
 package com.ll.project_13_backend.post.controller;
 
-import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.everyItem;
+import static org.hamcrest.Matchers.matchesPattern;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -92,7 +93,6 @@ class PostControllerTest {
                 .andDo(print())
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andExpect(MockMvcResultMatchers.header().string("Location", "/post/1"));
-
     }
 
     @DisplayName("게시글 제목은 반드시 입력해야 한다.")
@@ -596,14 +596,14 @@ class PostControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpectAll(
-                        jsonPath("$.content[*]").isNotEmpty(),
-                        jsonPath("$.content.size()").value(20)
-//                        jsonPath("$.hasNext").value(true)
+                        jsonPath("$.content[*].title", everyItem(matchesPattern(".*Title.*|.*3321.*"))),
+                        jsonPath("$.content.size()").value(20),
+                        jsonPath("$.last").value(false)
                 );
     }
 
 
-    @DisplayName("마지막 게시글을 출력하면 hasNext는 false가 된다.")
+    @DisplayName("마지막 게시글을 출력하면 last는 true가 된다.")
     @Test
     public void findAllHasNextTest() throws Exception {
         CreatePostDto createPostDto1 = CreatePostDto.builder()
@@ -657,13 +657,13 @@ class PostControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpectAll(
-                        jsonPath("$.content[*]").isNotEmpty(),
-                        jsonPath("$.content.size()").value(4)
-//                        jsonPath("$.hasNext").value(false)
+                        jsonPath("$.content[*].title",containsInAnyOrder("testTitle1", "testTitle2", "testTitle3","3321")),
+                        jsonPath("$.content.size()").value(4),
+                        jsonPath("$.last").value(true)
                 );
     }
 
-    @DisplayName("키워드 기준으로 검색하여 출력하고 마지막까지 출력이 끝나면 hasNext는 false가 된다.")
+    @DisplayName("키워드 기준으로 검색하여 출력하고 마지막까지 출력이 끝나면 last는 true가 된다.")
     @Test
     public void findSearchAllHasNextTest() throws Exception {
         CreatePostDto createPostDto1 = CreatePostDto.builder()
@@ -719,8 +719,8 @@ class PostControllerTest {
                 .andExpect(status().isOk())
                 .andExpectAll(
                         jsonPath("$.content[*].title", containsInAnyOrder("testTitle1", "testTitle2", "testTitle3")),
-                        jsonPath("$.content.size()").value(3)
-//                        jsonPath("$.hasNext").value(false)
+                        jsonPath("$.content.size()").value(3),
+                        jsonPath("$.last").value(true)
                 );
     }
 
@@ -774,15 +774,14 @@ class PostControllerTest {
             postService.createPost(createPostDto4, member3);
         }
 //todo hasNext가 검증이 안된다. 이유를 물어보자
-        //그리고 테스트 계속 실패 원인 불명 containsInAnyOrder가 계속 실패 testTitle1이 있음에도 매칭 안된다고 나옴
         mockMvc.perform(get("/post/search?keyword=Title")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpectAll(
-                        //그리고 테스트 계속 실패 원인 불명 containsInAnyOrder가 계속 실패
-                        jsonPath("$.content[*].title", containsInAnyOrder("testTitle1", "testTitle2", "testTitle3")),
-                        jsonPath("$.content.size()").value(20)
+                        jsonPath("$.content[*].title", everyItem(matchesPattern(".*Title.*"))),
+                        jsonPath("$.content.size()").value(20),
+                        jsonPath("$.last").value(false)
                 );
     }
 }
