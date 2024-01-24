@@ -25,7 +25,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Slice;
 import org.springframework.transaction.annotation.Transactional;
 
-//todo 통합 테스트 시 id가 보장받지 못하는 상황을 어떻게 처리해야 하는가 생각해보자
 @SpringBootTest
 @Transactional
 class PostServiceImplTest {
@@ -219,7 +218,6 @@ class PostServiceImplTest {
     @DisplayName("게시글을 수정한다.")
     @Test
     public void updatePostTest() {
-        //todo 테스트 코드를 작성 시 testTitle1 포스트 하나만 만들어서 테스르를 하는것인가 아니면 여러개를 만들어야 하는것인가 생각해보자
         //given
         CreatePostDto createPostDto = CreatePostDto.builder()
                 .title("testTitle1")
@@ -308,7 +306,7 @@ class PostServiceImplTest {
                 .isEqualTo(false);
     }
 
-    //todo 테스트 코드할 때 검증코드를 어디까지 써야할 지 모르겠음 좀 더 생각해보자
+    //todo 테스트 코드할 때 검증코드를 어디까지 짜야할 지 모르겠음 좀 더 생각해보자
     @DisplayName("메인페이지에서 모든 post를 20개씩 출력한다.")
     @Test
     public void findAllPost() {
