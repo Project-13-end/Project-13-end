@@ -31,14 +31,15 @@ public class PostController {
 
     @GetMapping
     public ResponseEntity<Slice<FindAllPostResponse>> findAll(@RequestParam(defaultValue = "0") int page) {
-        Slice<FindAllPostResponse> findAllPostResponses = FindAllPostResponse.of(postService.findAllPost(page));
+        final Slice<FindAllPostResponse> findAllPostResponses =
+                FindAllPostResponse.of(postService.findAllPost(page));
         return ResponseEntity.ok(findAllPostResponses);
     }
 
     @GetMapping("search")
     public ResponseEntity<Slice<FindAllPostResponse>> findSearchAll(@RequestParam(defaultValue = "0") int page,
                                                                  @RequestParam(defaultValue = "") String keyword) {
-        Slice<FindAllPostResponse> findAllPostResponseSlice =
+        final Slice<FindAllPostResponse> findAllPostResponseSlice =
                 FindAllPostResponse.of(postService.findAllPostByKeyword(page, keyword));
         return ResponseEntity.ok(findAllPostResponseSlice);
     }
@@ -47,14 +48,14 @@ public class PostController {
     public ResponseEntity<Void> createPost(@Valid @RequestBody CreatePostRequest createPostRequest,
                                            @CurrentMember Member member) {
 
-        Long postId = postService.createPost(createPostRequest.toCreatePostDto(), member);
+        final Long postId = postService.createPost(createPostRequest.toCreatePostDto(), member);
         return ResponseEntity.created(URI.create("/post/" + postId)).build();
     }
 
     @GetMapping("/{postId}")
     public ResponseEntity<FindPostResponse> findPost(@PathVariable("postId") Long postId) {
 
-        FindPostResponse findPostResponse = FindPostResponse.of(postService.findPost(postId));
+        final FindPostResponse findPostResponse = FindPostResponse.of(postService.findPost(postId));
         return ResponseEntity.ok(findPostResponse);
     }
 
