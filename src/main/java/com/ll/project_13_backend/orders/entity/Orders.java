@@ -1,5 +1,6 @@
 package com.ll.project_13_backend.orders.entity;
 
+import com.ll.project_13_backend.global.BaseEntity;
 import com.ll.project_13_backend.member.entity.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,7 +11,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
 @Entity
-public class Orders {
+public class Orders extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
