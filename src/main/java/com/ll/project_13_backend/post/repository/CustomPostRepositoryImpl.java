@@ -24,7 +24,7 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
         this.queryFactory = new JPAQueryFactory(em);
     }
     public Slice<FindAllPostDto> findAllPost(final Pageable pageable) {
-        List<FindAllPostDto> findAllPostDtos = queryFactory
+        final List<FindAllPostDto> findAllPostDtos = queryFactory
                 .select(new QFindAllPostDto(
                         post.id,
                         post.member.name,
@@ -44,12 +44,12 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
             hasNext = true;
         }
 
-        Slice<FindAllPostDto> result = new SliceImpl<>(findAllPostDtos, pageable, hasNext);
+        final Slice<FindAllPostDto> result = new SliceImpl<>(findAllPostDtos, pageable, hasNext);
         return result;
     }
 
     public Slice<FindAllPostDto> findAllPostByKeyword(final Pageable pageable, final String keyword) {
-        List<FindAllPostDto> findAllPostDtos = queryFactory
+        final List<FindAllPostDto> findAllPostDtos = queryFactory
                 .select(new QFindAllPostDto(
                         post.id,
                         post.member.name,
@@ -73,7 +73,7 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
             hasNext = true;
         }
 
-        Slice<FindAllPostDto> result = new SliceImpl<>(findAllPostDtos, pageable, hasNext);
+        final Slice<FindAllPostDto> result = new SliceImpl<>(findAllPostDtos, pageable, hasNext);
         return result;
     }
 
